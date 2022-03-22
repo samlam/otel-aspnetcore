@@ -19,3 +19,7 @@ dotnet run
 ## To Run via VSCode
 
 F5 to launch the site
+
+## Assumption
+
+OTEL Collector runs locally `localhost:4317`
