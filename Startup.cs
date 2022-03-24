@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 
 namespace core_api
@@ -31,10 +32,11 @@ namespace core_api
                 builder.AddHttpClientInstrumentation();
                 builder
                     .AddMeter("WeatherForecastApi")
-                    .AddOtlpExporter(o =>
+                    .AddOtlpExporter( (OtlpExporterOptions otlp, MetricReaderOptions reader) =>
                     {
-                        o.Endpoint = new Uri("http://localhost:4317");
-                        o.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                        otlp.Endpoint = new Uri("http://localhost:4317");
+                        otlp.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                        reader.MetricReaderType = MetricReaderType.Periodic;
                     });
             });
         }

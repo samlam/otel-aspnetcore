@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Metrics;
+﻿using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace core_api.Controllers
@@ -24,17 +25,21 @@ namespace core_api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<IEnumerable<WeatherForecast>> Get()
         {
-            var rng = new Random();
-            ForecastCounter.Add(1, new("location", "pasadena"), new("level", "low"));
-            return Enumerable.Range(1, 15).Select(index => new WeatherForecast
+            ForecastCounter.Add(1, new("location", "Glendale"), new("level", "HIGH"));
+            
+            return await Task.Run(() => 
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+                var rng = new Random();
+                return Enumerable.Range(1, 15)
+                    .Select(index => new WeatherForecast
+                {
+                    Date = DateTime.Now.AddDays(index),
+                    TemperatureC = rng.Next(-20, 55),
+                    Summary = Summaries[rng.Next(Summaries.Length)]
+                });
+            }).ConfigureAwait(false);
         }
     }
 }
